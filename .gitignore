@@ -1,0 +1,12 @@
+*.jar
+*.iml
+.idea/*
+atlassian-ide-plugin.xml
+deploy
+target
+*.class
+*.log
+*.log.*
+.idea
+generated
+css-generated

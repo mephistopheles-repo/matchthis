@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+          integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ=="
+          crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"
+          integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
+            integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ=="
+            crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/sockjs/0.3.4/sockjs.min.js"></script>
+    <title></title>
+    <style>
+        .chat-message {
+            border: solid rgba(212, 212, 212, 0.59);
+            margin: 0;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+<div class="container theme-showcase" role="main">
+    <div class="page-header">
+        <h1>Чат клиент для <strong>sockjs</strong></h1>
+    </div>
+    <div class="row">
+        <form class="form-inline">
+            <div class="form-group">
+                <label for="serverAddresInput">server address</label>
+                <input type="text" class="form-control" id="serverAddresInput" placeholder="ws://someshit.ru/">
+            </div>
+            <div class="form-group">
+                <label for="chatNameInput">Name</label>
+                <input type="text" class="form-control" id="chatNameInput" placeholder="хXхNAGIBATORxXx">
+            </div>
+            <button type="button" class="btn btn-default">Connect</button>
+        </form>
+    </div>
+    <br>
+
+    <div class="row col-sm-8">
+        <div class="alert alert-success" role="alert">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Connected</strong> Now you can chat.
+        </div>
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Disconnected!</strong> Chat not available.
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Panel title</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row" style="overflow-y: scroll; height: 300px;">
+                        <div class="row chat-message">
+                            <strong>Name</strong>: <span>teeeeeeeeeeeeeeeeeeeexxxxxxtttttteeeeeeeeeeeeeeeeeeeexxxxxxtttttteeeeeeeeeeeeeeeeeeeexxxxxx
+                            tttttteeeeeeeeeeeeeeeeeeeexxxxxxtttttteeeeeeeeeeeeeee
+                            eeeeexxxxxxttttt</span>
+                        </div>
+                        <div class="row chat-message">
+                            <strong>Name</strong>: <span>teeeeeeeeeeeeeeeeeeeexxxxxxttttt</span>
+                        </div>
+                        <div class="row chat-message">
+                            <strong>Name</strong>: <span>teeeeeeeeeeeeeeeeeeeexxxxxxttttt</span>
+                        </div>
+                        <div class="row chat-message">
+                            <strong>Name</strong>: <span>teeeeeeeeeeeeeeeeeeeexxxxxxttttt</span>
+                        </div>
+                        <div class="row chat-message">
+                            <strong>Name</strong>: <span>teeeeeeeeeeeeeeeeeeeexxxxxxttttt</span>
+                        </div>
+                        <div class="row chat-message">
+                            <strong>Name</strong>: <span>teeeeeeeeeeeeeeeeeeeexxxxxxttttt</span>
+                        </div>
+
+
+                    </div>
+                    <div class="row" style="padding-top: 12px;">
+                        <div class="col-sm-10">
+                            <textarea class="form-control" style="resize: none;" rows="3" maxlength="256"></textarea>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="button" class="btn btn-primary" value="Отправить">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
