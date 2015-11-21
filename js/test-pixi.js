@@ -1,11 +1,66 @@
+// Create a connection to http://localhost:9999/echo
+//var sock = new SockJS('http://localhost:9999/echo');
+var sock = new SockJS('http://reaction-gamedevru.rhcloud.com:9999/echo');
+
+// Open the connection
+sock.onopen = function () {
+    console.log('open');
+};
+
+// On connection close
+sock.onclose = function () {
+    console.log('close');
+};
+
+$(".js-chat-input").keypress("enter", function (e) {
+    if (e.ctrlKey) {
+        var message = $(".js-chat-input").val();
+        sock.send(JSON.stringify({command: "chat", data: {message: message}}));
+        $(".js-chat-input").val("");
+    }
+});
+var matches = [];
+sock.onmessage = function (e) {
+    // Get the content
+    var content = JSON.parse(e.data);
+    console.log(content);
+    if (content.command == 'chat') {
+        var clone = $("<div class='row chat-message'><strong>Name</strong>: <span>teeeeeeeeeeeeeeeeeeeexxxxxxttttt</span></div>");
+        clone.find("strong").text("emptyName");
+        clone.find("span").text(content.data.message);
+        $(".js-chat-messages-container").append(clone);
+    }
+
+    if (content.command == 'instance') {
+        if (_.isArray(content.data)) {
+            for (var key in content.data) {
+                createBunny(content.data[key].x, content.data[key].y, content.data[key].i);
+            }
+        } else {
+            createBunny(content.data.x, content.data.y, content.data.i);
+        }
+    }
+    if (content.command == 'move') {
+        var d = content.data;
+        matches[d.i].position.x = d.x;
+        matches[d.i].position.y = d.y;
+    }
+
+    if (content.command == 'rotate') {
+        var d = content.data;
+        matches[d.i].rotation = d.r;
+    }
+};
+
 
 var backgroundColor = 0x0000CC;
 var canvas = $("#js-game-field");
 var options = {
-    view:canvas[0],
-    resolution:1,
-    backgroundColor:backgroundColor
+    view: canvas[0],
+    resolution: 1,
+    backgroundColor: backgroundColor
 };
+
 var canvasSize = canvas.parent().css("width").split("px")[0];
 // create a renderer instance
 var renderer = PIXI.autoDetectRenderer(canvasSize, canvasSize, options);
@@ -15,37 +70,39 @@ var stage = new PIXI.Container();
 // create a texture from an image path
 var texture = PIXI.Texture.fromImage("images/match3.png");
 /*
-var boxOuterTexture = PIXI.Texture.fromImage("images/match_box_outer.png");
-var boxInnerTexture = PIXI.Texture.fromImage("images/match_box_inner.png");
+ var boxOuterTexture = PIXI.Texture.fromImage("images/match_box_outer.png");
+ var boxInnerTexture = PIXI.Texture.fromImage("images/match_box_inner.png");
 
-var matchBoxOuterSprite = new PIXI.Sprite(boxOuterTexture);
-var matchBoxInnerSprite = new PIXI.Sprite(boxInnerTexture);
+ var matchBoxOuterSprite = new PIXI.Sprite(boxOuterTexture);
+ var matchBoxInnerSprite = new PIXI.Sprite(boxInnerTexture);
 
-matchBoxOuterSprite.position.x = 10;
-matchBoxOuterSprite.position.y = 50;
-matchBoxInnerSprite.position.x = 12;
-matchBoxInnerSprite.position.y = 10;
+ matchBoxOuterSprite.position.x = 10;
+ matchBoxOuterSprite.position.y = 50;
+ matchBoxInnerSprite.position.x = 12;
+ matchBoxInnerSprite.position.y = 10;
 
-matchBoxOuterSprite.scale.x = 0.5;
-matchBoxOuterSprite.scale.y = 0.5;
+ matchBoxOuterSprite.scale.x = 0.5;
+ matchBoxOuterSprite.scale.y = 0.5;
 
-matchBoxInnerSprite.scale.x = 0.5;
-matchBoxInnerSprite.scale.y = 0.5;
-*/
+ matchBoxInnerSprite.scale.x = 0.5;
+ matchBoxInnerSprite.scale.y = 0.5;
+ */
 
 //stage.addChild(matchBoxInnerSprite);
-for (var u = 0;u < 3;u++){
-    for (var i = 0; i < 30; i++) {
-        createBunny(10+(i * 5),(u*8)+65);
-    }
-}
+
+/*for (var u = 0; u < 3; u++) {
+ for (var i = 0; i < 30; i++) {
+ createBunny(10 + (i * 5), (u * 8) + 65);
+ }
+ }*/
 
 
 //stage.addChild(matchBoxOuterSprite);
 
-function createBunny(x, y) {
+function createBunny(x, y, i) {
     // create our little match friend..
     var match = new PIXI.Sprite(texture);
+    match.sindex = i;
     //	match.width = 300;
     // enable the match to be interactive.. this will allow it to respond to mouse and touch events
     match.interactive = true;
@@ -99,14 +156,21 @@ function createBunny(x, y) {
     match.mousemove = match.touchmove = function (data) {
         if (this.rotateThis) {
             var lp = this.data.getLocalPosition(this);
-            this.rotation += Math.atan2(lp.y, lp.x) - Math.PI /2;
+            var r = this.rotation;
+            r += Math.atan2(lp.y, lp.x) - Math.PI / 2;
+            sock.send(JSON.stringify({command: "rotate", data: {r: r,i:this.sindex}}));
         } else if (this.dragging) {
             // need to get parent coords..
             var newPosition = this.data.global;//this.data.getLocalPosition(this.parent);
             // this.position.x = newPosition.x;
             // this.position.y = newPosition.y;
-            this.position.x = newPosition.x - this.sx;
-            this.position.y = newPosition.y - this.sy;
+/*            this.position.x = newPosition.x - this.sx;
+            this.position.y = newPosition.y - this.sy;*/
+            sock.send(JSON.stringify({command: "move", data: {
+                x: newPosition.x - this.sx,
+                y: newPosition.y - this.sy,
+                i:this.sindex
+            }}));
         }
     };
 
@@ -114,26 +178,27 @@ function createBunny(x, y) {
     match.position.x = x;
     match.position.y = y;
 
-/*    var line = new PIXI.Graphics();
+    /*    var line = new PIXI.Graphics();
 
-    line.lineStyle(1, 0x0000FF);
-    var p = match.toGlobal(new PIXI.Point(0, 0));
-    line.moveTo(p.x, p.y);
+     line.lineStyle(1, 0x0000FF);
+     var p = match.toGlobal(new PIXI.Point(0, 0));
+     line.moveTo(p.x, p.y);
 
-    p = match.toGlobal(new PIXI.Point(0, 20));
-    line.lineTo(p.x, p.y);
+     p = match.toGlobal(new PIXI.Point(0, 20));
+     line.lineTo(p.x, p.y);
 
-    line.lineStyle(1, 0xFF0000);
-    p = match.toGlobal(new PIXI.Point(0, 0));
-    line.moveTo(p.x, p.y);
+     line.lineStyle(1, 0xFF0000);
+     p = match.toGlobal(new PIXI.Point(0, 0));
+     line.moveTo(p.x, p.y);
 
-    p = match.toGlobal(new PIXI.Point(20, 0));
-    line.lineTo(p.x, p.y);
-    line.endFill();*/
+     p = match.toGlobal(new PIXI.Point(20, 0));
+     line.lineTo(p.x, p.y);
+     line.endFill();*/
     // add it to the stage
     //match.addChild(line);
     stage.addChild(match);
     //stage.addChild(line);
+    matches.push(match);
 }
 
 animate();
@@ -143,4 +208,10 @@ function animate() {
 
 
     renderer.render(stage);
+}
+
+function printMatches(){
+    for (var key in matches){
+        console.log(matches[key].rotation);
+    }
 }
