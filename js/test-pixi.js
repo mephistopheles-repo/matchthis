@@ -1,6 +1,6 @@
 // Create a connection to http://localhost:9999/echo
 //var sock = new SockJS('http://localhost:9999/echo');
-var sock = new SockJS('http://reaction-gamedevru.rhcloud.com:9999/echo');
+var sock = new SockJS('http://reaction-gamedevru.rhcloud.com:8000/echo');
 
 // Open the connection
 sock.onopen = function () {
